@@ -1,0 +1,10 @@
+---
+# vars file for docker
+image_name: httpd
+direc_path: /home/ec2-user/
+os_name: http_os
+exposed_port: 85
+os_port: 80
+path_to_mount: /usr/local/apache2/htdocs/
+no_of_os: 2
+file_name: web.html

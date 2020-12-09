@@ -1,0 +1,20 @@
+- hosts: localhost
+  vars:
+    tag_name: docker
+    count: 1
+  tasks:
+  - name: launch os on aws
+    include_role:
+      name: awsrole
+    
+
+  - name: wait for instances to ssh 
+    wait_for:
+     timeout: 30
+  - meta: refresh_inventory
+
+- hosts: tag_name_docker
+  tasks:
+  - name: http configuration on docker
+    include_role: 
+     name: docker

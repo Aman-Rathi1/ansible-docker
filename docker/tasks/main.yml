@@ -1,0 +1,54 @@
+---
+# tasks file for docker
+- name: creating docker yum
+  yum_repository:
+    name: docker
+    baseurl: "https://download.docker.com/linux/centos/7/x86_64/stable/"
+    description: "Docker repo"
+    gpgcheck: no
+  
+- name: installing docker
+  command:
+    cmd: sudo yum install docker-ce --nobest -y
+- name: starting docker services
+  service:
+    name: docker
+    state: started
+- name: installing python
+  package:
+    name: python36
+    state: present
+
+- name: installing docker sdk
+  pip: 
+   name: docker
+   
+- name: pulling image
+  docker_image:
+       name: "{{image_name}}"
+       source: pull
+
+- name: creating direc
+  file:
+    path: "{{direc_path}}{{os_name}}{{item}}"
+    state: directory 
+  with_sequence: count={{ no_of_os }}
+
+- name: dumping files
+  template:
+    src: "{{file_name}}"
+    dest: "{{direc_path}}{{os_name}}{{item}}"
+  with_sequence: count={{no_of_os}}
+- name: launching an os in docker
+  docker_container:
+    name: "{{os_name }}{{item}}"
+    recreate: yes
+    image: "{{ image_name }}"
+    ports:
+     - "{{ exposed_port|int + item|int }}:{{os_port}}"
+    volumes: 
+      - "{{direc_path}}{{os_name}}{{item}}:{{path_to_mount}}"
+  with_sequence: count={{ no_of_os }}
+
+
+   
